@@ -1,0 +1,22 @@
+{
+  "name": "thirdweb-support-discord-bot",
+  "version": "1.0.0-alpha",
+  "description": "Discord threads-based support for the thirdweb community.",
+  "main": "src/bot.ts",
+  "author": "Waren Gonzaga",
+  "scripts": {
+    "start": "node src/bot.js",
+    "dev": "nodemon src/bot.js"
+  },
+  "license": "GPL-3.0",
+  "private": true,
+  "dependencies": {
+    "discord.js": "^14.6.0",
+    "dotenv": "^16.0.3",
+    "google-spreadsheet": "^3.3.0",
+    "moment": "^2.29.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}

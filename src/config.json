@@ -1,0 +1,9 @@
+{
+    "resolution_tag_name": "Solved",
+    "command_prefix": "!",
+    "utc_offset": -8,
+    "datasheet_init": "init",
+    "datasheet_response": "response",
+    "datasheet_resolve": "resolve",
+    "mention_message": "Hello there! If you need help, please read the information in <#1074862134284005396> and post your questions or issues in the <#1029543258822553680> channel. Our team and community members are always ready to help you out. Thank you for building with us!"
+}
