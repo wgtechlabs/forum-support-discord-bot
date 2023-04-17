@@ -1,7 +1,5 @@
 # Forum-based Support Bot
 
-> **Note**: This bot is based from [thread-based-support-discord-bot](https://github.com/warengonzaga/thread-based-support-discord-bot). Converted to fully support the forum posts.
-
 A self-hosted forum-based support Discord bot for communities.
 
 ## How to Use
