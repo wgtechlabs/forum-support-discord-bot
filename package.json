@@ -1,7 +1,7 @@
 {
-  "name": "thirdweb-support-discord-bot",
+  "name": "forum-based-support-bot",
   "version": "1.0.0-alpha",
-  "description": "Discord threads-based support for the thirdweb community.",
+  "description": "Discord threads-based support for the technical community.",
   "main": "src/bot.ts",
   "author": "Waren Gonzaga",
   "scripts": {
