@@ -101,6 +101,93 @@ From the downloaded JSON file, extract the following values:
 
 Set the `GOOGLE_SPREADSHEET_ID` to your spreadsheet ID from step 3.
 
+#### Step 5: Configure Spreadsheet Structure
+
+After creating your spreadsheet, you need to set up the proper structure for data collection:
+
+##### Required Sheets
+
+Create **3 sheets** with these exact names (matching your `config.json`):
+
+1. **"init"** - Main data sheet (tracks all forum posts)
+2. **"response"** - First response tracking
+3. **"resolve"** - Resolution tracking
+
+##### Sheet Headers Setup
+
+**"init" Sheet (Row 1 Headers):**
+
+```text
+post_id | post_link | question | posted_by | posted | tags | responder | first_response | resolution_time | resolved_by
+```
+
+**"response" Sheet (Row 1 Headers):**
+
+```text
+post_id | first_response | responder
+```
+
+**"resolve" Sheet (Row 1 Headers):**
+
+```text
+post_id | resolution_time | resolved_by
+```
+
+##### Data Flow Overview
+
+| Sheet | When Data is Added | What Gets Recorded |
+|-------|-------------------|-------------------|
+| **init** | New forum post created | Post details, tags, timestamps (formulas auto-link other data) |
+| **response** | Support team first responds | Response time and responder username |
+| **resolve** | `!close` command used | Resolution time and who resolved it |
+
+##### Column Details
+
+**"init" Sheet Columns:**
+
+| Column | Field | Auto-Filled | Description |
+|--------|-------|-------------|-------------|
+| A | `post_id` | ✅ | Discord thread ID |
+| B | `post_link` | ✅ | Direct link to Discord post |
+| C | `question` | ✅ | Forum post title/question |
+| D | `posted_by` | ✅ | Username who created the post |
+| E | `posted` | ✅ | Creation timestamp (UTC-8) |
+| F | `tags` | ✅ | Forum tags applied to post |
+| G | `responder` | 🔗 | First responder (VLOOKUP formula) |
+| H | `first_response` | 🔗 | First response time (VLOOKUP formula) |
+| I | `resolution_time` | 🔗 | Resolution time (VLOOKUP formula) |
+| J | `resolved_by` | 🔗 | Who resolved it (VLOOKUP formula) |
+
+**"response" Sheet Columns:**
+
+| Column | Field | Auto-Filled | Description |
+|--------|-------|-------------|-------------|
+| A | `post_id` | ✅ | Discord thread ID |
+| B | `first_response` | ✅ | First response timestamp |
+| C | `responder` | ✅ | Support team member username |
+
+**"resolve" Sheet Columns:**
+
+| Column | Field | Auto-Filled | Description |
+|--------|-------|-------------|-------------|
+| A | `post_id` | ✅ | Discord thread ID |
+| B | `resolution_time` | ✅ | Resolution timestamp |
+| C | `resolved_by` | ✅ | Who closed the post |
+
+> **Legend:** ✅ = Automatically filled by bot | 🔗 = VLOOKUP formula links data from other sheets
+
+##### Analytics Capabilities
+
+Once set up, your spreadsheet will automatically track:
+
+- **Response Times** - How quickly support team responds
+- **Resolution Times** - How long issues take to resolve  
+- **Team Performance** - Individual support member metrics
+- **Popular Topics** - Most common tags and question types
+- **Support Workflow** - Complete timeline from post to resolution
+
+The **"init" sheet serves as your main dashboard** with all data connected through formulas, giving you comprehensive support analytics in one view.
+
 > **Note**: For more detailed information about Google Sheets authentication, refer to the [node-google-spreadsheet documentation](https://theoephraim.github.io/node-google-spreadsheet/#/guides/authentication?id=service-account).
 
 ## Development
