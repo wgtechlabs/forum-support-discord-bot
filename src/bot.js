@@ -7,8 +7,18 @@ const {
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const config = require(`${__dirname}/config.json`);
 const moment = require('moment');
+const { LogEngine, LogMode } = require('@wgtechlabs/log-engine');
 
 require('dotenv').config();
+
+// Configure log engine with local time only
+LogEngine.configure({ 
+  mode: LogMode.DEBUG,
+  format: {
+    includeIsoTimestamp: false,
+    includeLocalTime: true
+  }
+});
 
 // discord bot tokens
 const { 
@@ -234,9 +244,9 @@ const formatTime = (date) => {
 }
 
 // discord error log event
-// client.on('error', (err) => {
-// 	console.log(err.message)
-// });
+client.on('error', (err) => {
+	LogEngine.error(err.message);
+});
 
 // discord log event
 client.once('ready', bot => {
@@ -247,7 +257,7 @@ client.once('ready', bot => {
 		}]
 	});
 
-	console.log(`Ready! Logged in as ${bot.user.tag}`);
+	LogEngine.info(`Ready! Logged in as ${bot.user.tag}`);
 });
 
 // log in to Discord with your client's token
