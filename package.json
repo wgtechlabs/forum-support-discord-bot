@@ -3,13 +3,19 @@
   "version": "1.0.0-beta",
   "description": "Discord threads-based support for the technical community.",
   "main": "src/bot.ts",
-  "author": "Waren Gonzaga",
+  "author": "Waren Gonzaga <opensource@warengonzaga.com> (https://warengonzaga.com)",
+  "contributors": [
+    "WG Tech Labs <opensource@wgtechlabs.com> (https://wgtechlabs.com)"
+  ],
   "scripts": {
     "start": "node src/bot.js",
     "dev": "nodemon src/bot.js"
   },
   "license": "GPL-3.0",
   "private": true,
+  "engines": {
+    "node": ">=22.16.0"
+  },
   "dependencies": {
     "@wgtechlabs/log-engine": "^2.2.0",
     "discord.js": "14.22.1",
