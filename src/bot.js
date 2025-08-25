@@ -5,6 +5,7 @@ const {
 	GatewayIntentBits, 
 	Partials } = require('discord.js');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
+const { JWT } = require('google-auth-library');
 const config = require(`${__dirname}/config.json`);
 const moment = require('moment');
 const { LogEngine, LogMode } = require('@wgtechlabs/log-engine');
@@ -42,8 +43,15 @@ const client = new Client({
 	]
 });
 
-// load spreadsheet
-const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID);
+// create service account authentication for Google Sheets
+const serviceAccountAuth = new JWT({
+	email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+	key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+	scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+});
+
+// load spreadsheet with authentication
+const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID, serviceAccountAuth);
 
 // listen to post messages
 client.on('messageCreate', async (message) => {
@@ -209,12 +217,7 @@ client.on('threadCreate', async post => {
  * @param {string} datasheet - name of sheet where data being sent e.g. init, response, resolve
  */
 const sendData = async (data, datasheet) => {
-	// authenticate
-	await doc.useServiceAccountAuth({
-		client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-		private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-	});
-	// load the "initial" sheet
+	// load the spreadsheet info (authentication is already handled in constructor)
 	await doc.loadInfo();
 	const sheet = doc.sheetsByTitle[datasheet];
 
