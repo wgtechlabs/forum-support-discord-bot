@@ -43,10 +43,38 @@ const client = new Client({
 	]
 });
 
+// Validate and sanitize Google Sheets environment variables
+function validateAndSanitizeEnvVar(envVar, varName) {
+	if (!envVar) {
+		console.error(`Error: ${varName} environment variable is missing`);
+		process.exit(1);
+	}
+	
+	// Trim whitespace and strip surrounding quotes
+	let sanitized = envVar.trim();
+	if ((sanitized.startsWith('"') && sanitized.endsWith('"')) || 
+		(sanitized.startsWith("'") && sanitized.endsWith("'"))) {
+		sanitized = sanitized.slice(1, -1);
+	}
+	
+	return sanitized;
+}
+
+// Validate and sanitize Google service account credentials
+const googleServiceAccountEmail = validateAndSanitizeEnvVar(
+	process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL, 
+	'GOOGLE_SERVICE_ACCOUNT_EMAIL'
+);
+
+const googlePrivateKey = validateAndSanitizeEnvVar(
+	process.env.GOOGLE_PRIVATE_KEY, 
+	'GOOGLE_PRIVATE_KEY'
+).replace(/\\n/g, "\n"); // Replace escaped newlines with actual newlines
+
 // create service account authentication for Google Sheets
 const serviceAccountAuth = new JWT({
-	email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-	key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+	email: googleServiceAccountEmail,
+	key: googlePrivateKey,
 	scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
