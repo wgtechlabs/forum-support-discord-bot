@@ -5,6 +5,7 @@ const {
 	GatewayIntentBits, 
 	Partials } = require('discord.js');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
+const { JWT } = require('google-auth-library');
 const config = require(`${__dirname}/config.json`);
 const moment = require('moment');
 const { LogEngine, LogMode } = require('@wgtechlabs/log-engine');
@@ -42,8 +43,43 @@ const client = new Client({
 	]
 });
 
-// load spreadsheet
-const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID);
+// Validate and sanitize Google Sheets environment variables
+function validateAndSanitizeEnvVar(envVar, varName) {
+	if (!envVar) {
+		console.error(`Error: ${varName} environment variable is missing`);
+		process.exit(1);
+	}
+	
+	// Trim whitespace and strip surrounding quotes
+	let sanitized = envVar.trim();
+	if ((sanitized.startsWith('"') && sanitized.endsWith('"')) || 
+		(sanitized.startsWith("'") && sanitized.endsWith("'"))) {
+		sanitized = sanitized.slice(1, -1);
+	}
+	
+	return sanitized;
+}
+
+// Validate and sanitize Google service account credentials
+const googleServiceAccountEmail = validateAndSanitizeEnvVar(
+	process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL, 
+	'GOOGLE_SERVICE_ACCOUNT_EMAIL'
+);
+
+const googlePrivateKey = validateAndSanitizeEnvVar(
+	process.env.GOOGLE_PRIVATE_KEY, 
+	'GOOGLE_PRIVATE_KEY'
+).replace(/\\n/g, "\n"); // Replace escaped newlines with actual newlines
+
+// create service account authentication for Google Sheets
+const serviceAccountAuth = new JWT({
+	email: googleServiceAccountEmail,
+	key: googlePrivateKey,
+	scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+});
+
+// load spreadsheet with authentication
+const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID, serviceAccountAuth);
 
 // listen to post messages
 client.on('messageCreate', async (message) => {
@@ -209,12 +245,7 @@ client.on('threadCreate', async post => {
  * @param {string} datasheet - name of sheet where data being sent e.g. init, response, resolve
  */
 const sendData = async (data, datasheet) => {
-	// authenticate
-	await doc.useServiceAccountAuth({
-		client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-		private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-	});
-	// load the "initial" sheet
+	// load the spreadsheet info (authentication is already handled in constructor)
 	await doc.loadInfo();
 	const sheet = doc.sheetsByTitle[datasheet];
 
