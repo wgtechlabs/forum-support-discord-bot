@@ -59,6 +59,50 @@ GOOGLE_SERVICE_ACCOUNT_EMAIL=<service_email_account>
 GOOGLE_SPREADSHEET_ID=<google_spreadsheet_id>
 ```
 
+### Google Sheets Setup
+
+This bot uses Google Sheets to record support data. You'll need to set up a Google Service Account to authenticate with Google Sheets API.
+
+#### Step 1: Create a Google Cloud Project and Service Account
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable the Google Sheets API:
+   - Go to "APIs & Services" > "Library"
+   - Search for "Google Sheets API" and enable it
+4. Create a service account:
+   - Go to "APIs & Services" > "Credentials"
+   - Click "Create Credentials" > "Service account"
+   - Fill in the service account details and create it
+5. Generate a key for the service account:
+   - Click on the created service account
+   - Go to the "Keys" tab
+   - Click "Add Key" > "Create new key"
+   - Choose "JSON" format and download the key file
+
+#### Step 2: Extract Credentials
+
+From the downloaded JSON file, extract the following values:
+
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL`: The `client_email` field
+- `GOOGLE_PRIVATE_KEY`: The `private_key` field (keep the `\n` characters as they are)
+
+#### Step 3: Configure Google Spreadsheet
+
+1. Create a new Google Spreadsheet or use an existing one
+2. Copy the spreadsheet ID from the URL (the long string between `/d/` and `/edit`)
+3. Share the spreadsheet with your service account email with "Editor" permissions
+4. Create three sheets in your spreadsheet with the names specified in your `config.json`:
+   - Sheet for `datasheet_init` (default: "init")
+   - Sheet for `datasheet_response` (default: "response")
+   - Sheet for `datasheet_resolve` (default: "resolve")
+
+#### Step 4: Set Environment Variables
+
+Set the `GOOGLE_SPREADSHEET_ID` to your spreadsheet ID from step 3.
+
+> **Note**: For more detailed information about Google Sheets authentication, refer to the [node-google-spreadsheet documentation](https://theoephraim.github.io/node-google-spreadsheet/#/guides/authentication?id=service-account).
+
 ## Development
 
 ### Install the packages
